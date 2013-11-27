@@ -20,6 +20,7 @@ import com.github.kevinsawicki.http.HttpRequest;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,6 +28,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+
+import org.apache.http.entity.mime.content.ContentBody;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 
 public class SimpleContent {
 	public static String PREFIX_URL = "simplecontent_";
@@ -102,9 +107,18 @@ public class SimpleContent {
         try {
         	HttpRequest request = null;
         	if (method.equals("post")) {
-        		request = HttpRequest.post(url).send(data);
+        		if (data == null) {
+        			request = HttpRequest.post(url);
+        		} else {
+        			request = HttpRequest.post(url).send(data);
+        		}
         	} else if (method.equals("get")) {
-        		request = HttpRequest.get(url).send(data);
+        		if (data == null) {
+        			//.accept("application/json")
+        			request = HttpRequest.get(url);	
+        		} else {
+        			request = HttpRequest.get(url).send(data);
+        		}
         	}
         	String body = request.body();
         	
@@ -130,7 +144,12 @@ public class SimpleContent {
      */
     @SuppressWarnings("resource")
 	public synchronized String UrlContent(String url, String data, String method) throws ApiException {
-    	String urlComplete = url + "?" + data;
+    	String urlComplete = "";
+    	if (data == null) {
+    		urlComplete = url;
+    	} else {
+    		urlComplete = url + "?" + data;
+    	}
     	String filename = String.valueOf(PREFIX_URL + StringHelper.md5(urlComplete));
     	File f = new File(cacheDir, filename);
     	InputStream is;
@@ -146,7 +165,7 @@ public class SimpleContent {
 				// Si está desactualizado pero no hay internet se muestra el fichero		
 				} else {
 					return NetHelper.getContents(f);
-				}				
+				}
 			} else {
 				return NetHelper.getContents(f);	
 			}
@@ -160,7 +179,7 @@ public class SimpleContent {
 			} else {
 				return "no network";
 			}
-		}    	
+		}
     }
     
     public synchronized String getUrlContent(String url, String data) throws ApiException {
@@ -170,6 +189,22 @@ public class SimpleContent {
     public synchronized String postUrlContent(String url, String data) throws ApiException {
     	return UrlContent(url, data, "post");
     }
+    
+    public static synchronized boolean nowPost(String url, String[] datas) {
+    	HttpRequest request = HttpRequest.post(url);
+    	for(int i = 0; i < datas.length; i = i+2) {
+    		if (datas[i] != null && datas[i+1] != null) {
+    			if (datas[i].length() > 4 && datas[i].substring(0,5).equals("file_")) {
+    				File file = new File(datas[i+1]);
+    				request.part(datas[i].substring(5), file);
+    			} else {
+    				request.part(datas[i], datas[i+1]);
+    			}
+    		}
+    	}
+    	Log.d("TEMA", "BODY: " + request.body());
+    	return request.ok(); 
+    }
         
 	public void clearCache() {
 		// clear SD cache
@@ -177,4 +212,30 @@ public class SimpleContent {
 		for (File f : files)
 			f.delete();
 	}
+	
+    @SuppressWarnings("resource")
+	public synchronized boolean clearFile(String url, String data) {
+    	String urlComplete = "";
+    	if (data == null) {
+    		urlComplete = url;
+    	} else {
+    		urlComplete = url + "?" + data;
+    	}
+    	String filename = String.valueOf(PREFIX_URL + StringHelper.md5(urlComplete));
+    	File f = new File(cacheDir, filename);
+    	InputStream is;
+		try {
+			is = new FileInputStream(f);
+						
+			if (NetHelper.isOnline(this.context)) {
+				f.delete();
+				return true;
+			} else {
+				return false;
+			}
+			//Devolvemos el fichero siempre
+		} catch (FileNotFoundException e1) {
+			return false;
+		}
+    }
 }
