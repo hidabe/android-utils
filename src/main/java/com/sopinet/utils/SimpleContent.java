@@ -28,10 +28,20 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 
 public class SimpleContent {
 	public static String PREFIX_URL = "simplecontent_";
@@ -103,7 +113,8 @@ public class SimpleContent {
      * @return String content from URL
      * @throws ApiException
      */
-    public synchronized String UrlContentDO(String url, String data, File f, String method) throws ApiException {        
+    public synchronized String UrlContentDO(String url, String data, File f, String method) throws ApiException {
+    	Log.d("TEMA", "URL: "+url);
         try {
         	HttpRequest request = null;
         	if (method.equals("post")) {
@@ -117,7 +128,7 @@ public class SimpleContent {
         			//.accept("application/json")
         			request = HttpRequest.get(url);	
         		} else {
-        			request = HttpRequest.get(url).send(data);
+        			request = HttpRequest.get(url + "?" + data);
         		}
         	}
         	String body = request.body();
@@ -150,6 +161,7 @@ public class SimpleContent {
     	} else {
     		urlComplete = url + "?" + data;
     	}
+    	Log.d("TEMA", "URLCOMPLETE: "+urlComplete);
     	String filename = String.valueOf(PREFIX_URL + StringHelper.md5(urlComplete));
     	File f = new File(cacheDir, filename);
     	InputStream is;
@@ -191,19 +203,61 @@ public class SimpleContent {
     }
     
     public static synchronized boolean nowPost(String url, String[] datas) {
-    	HttpRequest request = HttpRequest.post(url);
+    	HttpPost httpPost = new HttpPost(url);    	
+    	HttpClient httpClient = new DefaultHttpClient();
+    	MultipartEntity request = new MultipartEntity();
+    	HttpContext httpContext = new BasicHttpContext();
+    	
     	for(int i = 0; i < datas.length; i = i+2) {
     		if (datas[i] != null && datas[i+1] != null) {
     			if (datas[i].length() > 4 && datas[i].substring(0,5).equals("file_")) {
     				File file = new File(datas[i+1]);
-    				request.part(datas[i].substring(5), file);
+    				ContentBody cbFile = new FileBody(file);
+    				request.addPart(datas[i].substring(5), cbFile);
+    				Log.d("TEMA", "D: " + datas[i].substring(5));
+    				Log.d("TEMA", "I: " + file);
     			} else {
-    				request.part(datas[i], datas[i+1]);
+    				Log.d("TEMA", "D: " + datas[i]);
+    				Log.d("TEMA", "I: " + datas[i+1]);
+    				try {
+						request.addPart(datas[i], new StringBody(datas[i+1]));
+					} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
     			}
     		}
-    	}
-    	Log.d("TEMA", "BODY: " + request.body());
-    	return request.ok(); 
+    	}    	
+    	
+		httpPost.setEntity(request);
+		HttpResponse response = null;
+		try {
+			response = httpClient.execute(httpPost, httpContext);
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String serverResponse = null;
+		try {
+			serverResponse = EntityUtils.toString(response.getEntity());
+		} catch (org.apache.http.ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}    	
+    	
+		Log.d("TEMA", "BODY: " + serverResponse);
+    	
+    	return true;
+    	//HttpRequest request = HttpRequest.post(url);
+
+    	//Log.d("TEMA", "BODY: " + request.body());
+    	//return request.ok(); 
     }
         
 	public void clearCache() {
