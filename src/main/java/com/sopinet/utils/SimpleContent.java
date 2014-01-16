@@ -34,6 +34,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
@@ -121,7 +122,13 @@ public class SimpleContent {
         		if (data == null) {
         			request = HttpRequest.post(url);
         		} else {
-        			request = HttpRequest.post(url).send(data);
+        			try {
+        				request = HttpRequest.post(url).send(data);	
+        			} catch(Exception e) {
+        				Log.d("TEMA", "Exception: " + e.getMessage());
+        				Log.d("TEMA", "printStackTrace: " + e.getMessage());
+        				return null;
+        			}
         		}
         	} else if (method.equals("get")) {
         		if (data == null) {
@@ -202,7 +209,44 @@ public class SimpleContent {
     	return UrlContent(url, data, "post");
     }
     
+    public static synchronized boolean nowPostJSON(String url, String json) {
+        HttpClient httpClient = new DefaultHttpClient();
+
+        Log.d("TEMA", "json: "+json);
+        
+        HttpResponse response = null;
+        try {
+            HttpPost request = new HttpPost(url);
+            StringEntity params =new StringEntity(json);
+            request.addHeader("content-type", "application/json");
+            request.setEntity(params);
+            response = httpClient.execute(request);
+
+            // handle response here...
+        }catch (Exception ex) {
+        	Log.d("TEMA", "ex1: "+ex.getMessage());
+            // handle exception here
+        }
+        
+		String serverResponse = null;
+		try {
+			serverResponse = EntityUtils.toString(response.getEntity());
+		} catch (org.apache.http.ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Log.d("TEMA", "BODY: " + serverResponse);
+		
+		httpClient.getConnectionManager().shutdown();
+        
+        return true;
+    }
+    
     public static synchronized boolean nowPost(String url, String[] datas) {
+    	Log.d("TEMA", "URL: "+url);
     	HttpPost httpPost = new HttpPost(url);    	
     	HttpClient httpClient = new DefaultHttpClient();
     	MultipartEntity request = new MultipartEntity();

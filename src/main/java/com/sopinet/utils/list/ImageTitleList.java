@@ -3,6 +3,7 @@ package com.sopinet.utils.list;
 import java.util.ArrayList;
 
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import com.sopinet.utils.R;
 import com.sopinet.utils.data.ImageTitleData;
@@ -28,19 +29,21 @@ public class ImageTitleList extends BaseAdapter implements Filterable {
 		public ImageView image;
 	}	    	
 	
+	private ImageLoader imageLoader;
 	private ImageTitleData[] data;
 	private ArrayList<ImageTitleData> filteredData = null;
 	protected final LayoutInflater inflater;
 	private ItemFilter mFilter = new ItemFilter();
 	
 	@SuppressWarnings("unchecked")
-	public ImageTitleList(Activity context, ImageTitleData[] data) {
+	public ImageTitleList(Activity context, ImageTitleData[] data, ImageLoader imageLoader) {
         filteredData = new ArrayList<ImageTitleData>(data.length);
         // Iniciamos los datos
         for (int i = 0; i < data.length; i++) {
         	filteredData.add(data[i]);
         }
         this.data = data;
+        this.imageLoader = imageLoader;
         inflater = LayoutInflater.from(context);
 	}	
 	
@@ -79,7 +82,10 @@ public class ImageTitleList extends BaseAdapter implements Filterable {
 	    }
 	    holder.title.setText(this.filteredData.get(position).getTitle());
 	    holder.subtitle.setText(this.filteredData.get(position).getSubtitle());
-	    UrlImageViewHelper.setUrlDrawable(holder.image, this.filteredData.get(position).getImage());
+	    //UrlImageViewHelper.setUrlDrawable(holder.image, this.filteredData.get(position).getImage());
+	    if (this.filteredData.get(position).getImage() != null) {
+	    	this.imageLoader.displayImage(this.filteredData.get(position).getImage(), holder.image);
+	    }
 	 
 	    return(item);
 	}
