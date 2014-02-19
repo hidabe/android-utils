@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>	
 	<groupId>com.sopinet</groupId>
 	<artifactId>utils</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.2</version>
 	<packaging>apk</packaging>
 	<name>utils</name>
 
@@ -74,6 +74,7 @@
 			<plugin>
 		    	<groupId>org.apache.maven.plugins</groupId>
 		        <artifactId>maven-gpg-plugin</artifactId>
+		        <version>1.4</version>
 		        <executions>
 		        	<execution>
 		            	<id>sign-artifacts</id>
