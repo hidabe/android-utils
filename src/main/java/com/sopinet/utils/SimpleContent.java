@@ -67,6 +67,9 @@ public class SimpleContent {
 	}
 	
     public void initCacheDir(String cacheString) {
+    	this.cacheDir = this.context.getExternalFilesDir(null);
+    	Log.d("TEMA", "DIR: " + this.cacheDir);
+    	/*
 		if (Environment.getExternalStorageDirectory().equals(
 				android.os.Environment.MEDIA_MOUNTED))
 			this.cacheDir = new File(Environment.getExternalStorageDirectory(),
@@ -75,6 +78,7 @@ public class SimpleContent {
 			this.cacheDir = this.context.getCacheDir();
 		if (!this.cacheDir.exists())
 			this.cacheDir.mkdirs();
+		*/
     }	
 
     /**
@@ -115,7 +119,6 @@ public class SimpleContent {
      * @throws ApiException
      */
     public synchronized String UrlContentDO(String url, String data, File f, String method) throws ApiException {
-    	Log.d("TEMA", "URL: "+url);
         try {
         	HttpRequest request = null;
         	if (method.equals("post")) {
@@ -177,8 +180,8 @@ public class SimpleContent {
 			
 			long lastMod = f.lastModified();
 			long now = System.currentTimeMillis();
-						
-			if (now - lastMod > offset) {
+			
+			if (now - lastMod > offset && offset != -1) {
 				if (NetHelper.isOnline(this.context)) {
 					return UrlContentDO(url, data, f, method);
 				// Si está desactualizado pero no hay internet se muestra el fichero		
