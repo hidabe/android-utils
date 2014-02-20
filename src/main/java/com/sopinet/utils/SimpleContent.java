@@ -48,6 +48,8 @@ public class SimpleContent {
 	public static String PREFIX_URL = "simplecontent_";
 	public Context context;
 	public String cacheString;
+	// long offset = 0 // Sin caché
+	// long offset = -1 // Ilimitado
 	// long offset = 86400000; // 1 DÍA
 	// long offset = 3600000; // 1 HORA
 	// long offset = 3; // 3 milisegundos (pruebas)	
@@ -173,6 +175,7 @@ public class SimpleContent {
     	}
     	Log.d("TEMA", "URLCOMPLETE: "+urlComplete);
     	String filename = String.valueOf(PREFIX_URL + StringHelper.md5(urlComplete));
+    	
     	File f = new File(cacheDir, filename);
     	InputStream is;
 		try {
