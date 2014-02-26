@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="top|left"
+    android:layout_margin="0dp" >
+    
+    <LinearLayout
+	    android:id="@+id/cellLayout"
+	    android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="top|left"
+	    android:padding="5dp"
+	    android:layout_margin="0dp" 
+	    android:background="@drawable/its_shape" >
+	    
+	    <ImageView
+	        android:id="@+id/listIMG"
+			android:layout_width="80sp"
+	    	android:layout_height="80sp"    	
+	    	android:scaleType="fitXY"
+	    	android:background="@drawable/iv_shape" />
+	    
+	    <LinearLayout
+		    android:orientation="horizontal"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:gravity="top|left"
+		    android:paddingLeft="15dp"
+		    android:weightSum="5" >
+	    	
+	    	<LinearLayout
+				android:orientation="vertical"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"    	    
+	    	    android:layout_weight="4"
+	    	    android:gravity="top|left">
+				
+				<TextView
+				    android:id="@+id/listTITLE"
+				    android:layout_width="fill_parent"
+				    android:layout_height="wrap_content"	  
+				    android:textStyle="normal"
+				    android:textSize="20sp"
+				    android:textColor="#ff703589"
+				    android:shadowColor="#ff808080"
+				    android:shadowDx="1.2"
+				    android:shadowDy="1.2"
+				    android:shadowRadius="1.2"
+				    android:gravity="top|left" />
+				
+				<TextView
+				    android:id="@+id/listSUBTITLE"
+				    android:layout_width="fill_parent"
+				    android:layout_height="wrap_content"	  
+				    android:textStyle="normal"
+				    android:textColor="#ffa5a5a5"
+				    android:textSize="14sp" />			    	    
+	    	</LinearLayout>
+			
+			<ImageView
+			    android:layout_width="wrap_content"
+		    	android:layout_height="wrap_content" 
+		    	android:layout_weight="1"
+		   		android:src="@drawable/ic_action_next_item_purple" />
+		</LinearLayout>
+	</LinearLayout>
+    
+    <!--
+    <View
+        android:background="@drawable/its_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="6sp" 
+        android:layout_marginTop="-4sp" />
+    -->
+    
+</LinearLayout>
+
+	
