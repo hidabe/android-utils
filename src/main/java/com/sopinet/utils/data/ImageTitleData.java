@@ -12,4 +12,8 @@ public class ImageTitleData {
 	public String getSubtitle() {
 		return "";
 	}
+	
+	public Boolean getSection() {
+		return false;
+	}
 }

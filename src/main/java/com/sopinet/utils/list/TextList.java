@@ -8,6 +8,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import com.sopinet.utils.R;
 import com.sopinet.utils.data.ImageTitleData;
+import com.sopinet.utils.data.TextData;
 
 import android.app.Activity;
 import android.content.Context;
@@ -23,42 +24,41 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ImageTitleList extends BaseAdapter implements Filterable {
+public class TextList extends BaseAdapter implements Filterable {
 	static class ViewHolder {
 	    public TextView title;
 	    public TextView subtitle;
-		public ImageView image;
 	}	    	
 	
-	private ImageLoader imageLoader;
-	private ImageTitleData[] data;
-	private List<ImageTitleData> filteredData = null;
+	private TextData[] data;
+	private ArrayList<TextData> filteredData = null;
 	protected final LayoutInflater inflater;
 	private ItemFilter mFilter = new ItemFilter();
 	
-	
 	@SuppressWarnings("unchecked")
-	public ImageTitleList(Activity context, ImageTitleData[] data, ImageLoader imageLoader) {
-        filteredData = new ArrayList<ImageTitleData>(data.length);
+	public TextList(Activity context, TextData[] data) {
+        this.data = data;
+        filteredData = new ArrayList<TextData>(data.length);
         // Iniciamos los datos
         for (int i = 0; i < data.length; i++) {
         	filteredData.add(data[i]);
-        }
-        this.data = data;
-        this.imageLoader = imageLoader;
+        }        
         inflater = LayoutInflater.from(context);
-	}	
+	}
 	
-	public ImageTitleList(Activity context, List<ImageTitleData> data, ImageLoader imageLoader) {
-		filteredData = new ArrayList<ImageTitleData>(data.size());
-		// Iniciamos this.data
-		this.data = new ImageTitleData[data.size()];
-		for (int i = 0; i < data.size(); i++) {
+	public TextList(Activity context, List<TextData> data) {
+		this.data = new TextData[data.size()];		
+		for(int i = 0; i < data.size(); i++) {
 			this.data[i] = data.get(i);
-			filteredData.add(data.get(i));
 		}
-        this.imageLoader = imageLoader;
-        inflater = LayoutInflater.from(context);
+		Log.d("TEMA", String.valueOf(this.data.length));
+        filteredData = new ArrayList<TextData>(this.data.length);
+        // Iniciamos los datos
+        for (int i = 0; i < this.data.length; i++) {
+        	Log.d("TEMA", this.data[i].getTitle());
+        	filteredData.add(this.data[i]);
+        }		
+		inflater = LayoutInflater.from(context);
 	}
 	
 	public int getCount() {
@@ -81,10 +81,9 @@ public class ImageTitleList extends BaseAdapter implements Filterable {
 	 
 	    if(item == null)
 	    {
-	    	item = inflater.inflate(R.layout.imagetitle_item, null);
+	    	item = inflater.inflate(R.layout.text_item, null);
 	 
 	        holder = new ViewHolder();
-	        holder.image = (ImageView)item.findViewById(R.id.listIMG);
 	        holder.title = (TextView)item.findViewById(R.id.listTITLE);
 	        holder.subtitle = (TextView)item.findViewById(R.id.listSUBTITLE);
 	 
@@ -96,10 +95,6 @@ public class ImageTitleList extends BaseAdapter implements Filterable {
 	    }
 	    holder.title.setText(this.filteredData.get(position).getTitle());
 	    holder.subtitle.setText(this.filteredData.get(position).getSubtitle());
-	    //UrlImageViewHelper.setUrlDrawable(holder.image, this.filteredData.get(position).getImage());
-	    if (this.filteredData.get(position).getImage() != null) {
-	    	this.imageLoader.displayImage(this.filteredData.get(position).getImage(), holder.image);
-	    }
 	 
 	    return(item);
 	}
@@ -115,10 +110,10 @@ public class ImageTitleList extends BaseAdapter implements Filterable {
 			
 			FilterResults results = new FilterResults();
 			
-			final ImageTitleData[] list = data;
+			final TextData[] list = data;
  
 			int count = list.length;
-			final ArrayList<ImageTitleData> nlist = new ArrayList<ImageTitleData>(count);
+			final ArrayList<TextData> nlist = new ArrayList<TextData>(count);
  			
 			for (int i = 0; i < count; i++) {
 				if (list[i].getTitle().toLowerCase().contains(filterString)
@@ -136,7 +131,7 @@ public class ImageTitleList extends BaseAdapter implements Filterable {
 		@SuppressWarnings("unchecked")
 		@Override
 		protected void publishResults(CharSequence constraint, FilterResults results) {
-			filteredData = (ArrayList<ImageTitleData>) results.values;
+			filteredData = (ArrayList<TextData>) results.values;
 			notifyDataSetChanged();
 		}
  

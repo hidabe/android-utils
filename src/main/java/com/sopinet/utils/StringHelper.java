@@ -65,4 +65,12 @@ public class StringHelper {
     matcher = pattern.matcher(paramString);
     return matcher.matches();
   }
+  
+  public static String getVerticalString(String text) {
+	  String newtext = "";
+	  for (int i = 0; i < text.length(); i++) { 
+		  newtext += text.charAt(i) + "\n";
+	  }
+	  return newtext;
+  }
 }
