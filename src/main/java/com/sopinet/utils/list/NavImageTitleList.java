@@ -1,6 +1,10 @@
 package com.sopinet.utils.list;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.sopinet.utils.R;
+import com.sopinet.utils.data.MenuData;
 import com.sopinet.utils.data.NavImageTitleData;
 
 import android.content.Context;
@@ -26,6 +30,16 @@ public class NavImageTitleList extends BaseAdapter implements Filterable {
 	public NavImageTitleList(Context context, NavImageTitleData[] data) {
 		this.context = context;
 		this.data = data;
+		inflater = LayoutInflater.from(context);
+	}
+	
+	public NavImageTitleList(Context context, List<NavImageTitleData> dataList) {
+		this.context = context;
+		this.data = new NavImageTitleData[dataList.size()];
+		for(int i = 0; i < dataList.size(); i++) {
+			this.data[i] = new NavImageTitleData();
+			this.data[i] = dataList.get(i);
+		}
 		inflater = LayoutInflater.from(context);
 	}
 
